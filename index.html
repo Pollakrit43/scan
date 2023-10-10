@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    
+</head>
+<style>
+    
+</style>
+
+<body>
+    <input type="file" id="qr-input-file" accept="image/*" capture>
+    <div id="reader" width="300px" height="300px"></div>
+    <div>
+        <h2 id="result-qr_all"></h2>
+        <h2 id="result-qr_id"></h2>
+        <h2 id="result-qr_eum"></h2>
+        <h2 id="result-qr_qt"></h2>
+    </div>
+
+</body>
+
+
+<script>
+    let reader = document.getElementById('reader')
+    let result_qr_all = document.getElementById('result-qr_all')
+    let result_qr_id = document.getElementById('result-qr_id')
+    let result_qr_eum = document.getElementById('result-qr_eum')
+    let result_qr_qt = document.getElementById('result-qr_qt')
+    const html5QrCode = new Html5Qrcode(/* element id */ "reader");
+    // File based scanning
+    const fileinput = document.getElementById('qr-input-file');
+    fileinput.addEventListener('change', e => {
+        if (e.target.files.length == 0) {
+            // No file selected, ignore 
+            return;
+        }
+
+        const imageFile = e.target.files[0];
+        // Scan QR Code
+        html5QrCode.scanFile(imageFile, true)
+            .then(decodedText => {
+               
+                let text = decodedText
+                let resultid = text.substring(0, 10)
+                let resulteum = text.substring(10, 14)
+                let resultqt = text.substring(14, 15)
+                result_qr_all.innerHTML = "เลขทั้งหมด = " + decodedText
+                result_qr_id.innerHTML = "ใบปูผ้า = " + resultid
+                result_qr_eum.innerHTML = "มัด = " + resulteum
+                result_qr_qt.innerHTML = "จำนวน = " + resultqt
+
+                // success, use decodedText
+                console.log(decodedText);
+            })
+            .catch(err => {
+                // failure, handle it.
+                console.log(`Error scanning file. Reason: ${err}`)
+            });
+            reader.style.cssText = `
+                    width: 300px;
+                    height: 300px;
+                `;
+           
+            html5QrCode.clear()
+            
+    });
+
+   
+
+</script>
+
+</html>
